@@ -18,12 +18,13 @@ impl RunAlgo {
         start: String,
         end: String,
     ) -> Self {
-        let start: DateTime<Local> = Local
-            .datetime_from_str(&start, "%Y.%m.%d %H:%M:00")
-            .expect("Unable to convert to the string to a DateTime format");
-        let end: DateTime<Local> = Local
-            .datetime_from_str(&end, "%Y.%m.%d %H:%M:00")
-            .expect("Unable to convert to the string to a DateTime format");
+        // let start: DateTime<Local> = DateTime::naive_local(&self)
+        let start: DateTime<Local> = DateTime::parse_from_str(&start, "%Y.%m.%d %H:%M:00")
+            .expect("Unable to convert to the string to a DateTime format")
+            .into();
+        let end: DateTime<Local> = DateTime::parse_from_str(&end, "%Y.%m.%d %H:%M:00")
+            .expect("Unable to convert to the string to a DateTime format")
+            .into();
         RunAlgo {
             instrument,
             timeframe,
