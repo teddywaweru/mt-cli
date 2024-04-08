@@ -45,10 +45,13 @@ pub fn parse_open_trade(
 }
 
 pub fn parse_open_trades(data: String) -> Result<OpenTrades, serde_json::Error> {
-    let mut open_trades: Map<String, Value> = serde_json::from_str(&data)?;
-    open_trades.remove("_action");
-    let open_trades: String = serde_json::to_string(open_trades.get("_trades").unwrap())?;
-    let mapped_trades: Map<String, Value> = serde_json::from_str(&open_trades)?;
+    let open_trades: Map<String, Value> = serde_json::from_str(&data)?;
+    let mapped_trades: Map<String, Value> = serde_json::from_value(
+        open_trades
+            .get("_trades")
+            .expect("_trades data is not available in the provided data")
+            .to_owned(),
+    )?;
     let mut open_trades: OpenTrades = OpenTrades { trades: vec![] };
     for (idx, (trade_id, trade)) in mapped_trades.iter().enumerate() {
         let trade: OpenTrade = parse_open_trade(trade_id, trade)?;
