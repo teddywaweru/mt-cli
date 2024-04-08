@@ -1,6 +1,9 @@
+use crate::mt5_bridge;
+use crate::sockets::ConnectionSockets;
 use crate::test_algorithm::RunAlgo;
-use crate::tick::{HistoricalTickData, InstantRates};
 use clap::{Parser, Subcommand};
+use data_parser::data_types::{HistoricalTickData, InstantRates, OpenTrades};
+
 #[derive(Parser)]
 #[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader4 and Rust", long_about=None)]
 /// Some application to do algorithmic trading with

@@ -46,7 +46,7 @@ impl ConnectionSockets {
     }
 
     // TODO impl a config files that holds the port numbers.
-    pub fn connect(&self) -> Result<&Self, zmq::Error> {
+    fn connect(&self) -> Result<&Self, zmq::Error> {
         self.response.connect("tcp://127.0.0.1:32769")?;
         self.request.connect("tcp://127.0.0.1:32768")?;
         self.subscribe.connect("tcp://127.0.0.1:32770")?;

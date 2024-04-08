@@ -1,6 +1,5 @@
 // needs a struct that holds details of what the sim is about ie
 use crate::indicator::IndicatorData;
-use crate::parse_data::parse_indicator_data;
 use crate::sockets::ConnectionSockets;
 use chrono::{DateTime, Local, TimeZone};
 
