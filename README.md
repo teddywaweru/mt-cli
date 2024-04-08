@@ -44,3 +44,57 @@ Data Structures
    /// find trading trend
    /// subscribe to instrument
    /// place trade
+
+---
+
+Project focuses on calculating parameters for trades I would enter over time.
+SHOULD WORK ON BOTH LINUX AND WINDOWS
+
+## Minimum viable product workflow
+
+1. User provides a currency pair(string)
+2. Program to fetch data on the currency pair to calculate(requires connecting to a platform, whichever that may be)
+3. Program calculates basic parameter values for a feasible trade to enter for the currency ie. current price point, pips to a TP, pips to an SL,
+4. Provide the calculated value to the user on the terminal
+
+## After this...
+
+1. Include altering the values to be used during the calculation, percentage risk to use, lot size to use
+
+## After this...
+
+1. GUI
+
+## Functionality:
+
+Calculation of Lot Sizes
+Calculatoin of Stop Losses and Take Profits
+
+## Essential:
+
+To work on both UNIX and Windows Systems
+
+## Auxillary:
+
+Create new trades on whichever platform that is ultimately going to be connected to the calculator
+
+## Nice to Have
+
+Notifications on Price Hits?
+Reporting on trades?
+Capture data from external sources ie. price values? News events?
+
+## TODO
+
+[] Proper note taking on Obsidian, so ideas can be linked.
+
+1. Determine the aspects to connect to? Do we have a Windows server running the MT5 application?
+   Options for setting up the server.
+2. Configure the design architecture for the program
+   Based on functionality-
+   Calculator,
+   Incoming data(from user)
+   Outgoing data(from user)
+   Form of display: tui, gui,
+   Incoming data(fetched from external sources)
+   Outgoing data(fetched from external sources)
