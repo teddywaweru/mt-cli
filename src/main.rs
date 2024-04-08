@@ -1,7 +1,5 @@
 #![allow(unused)]
 
-use clap::{Parser, Subcommand};
-use zmq;
 //add following packages:
 //1. Color-eyre
 //2. iRust
@@ -10,14 +8,15 @@ use zmq;
 //5. SQLx
 //6. Clap
 mod account;
+mod cli;
 mod cli_args;
 mod indicator;
-mod parse_data;
+mod mt5_bridge;
 mod sockets;
 mod test_algorithm;
 mod tick;
 
-use cli_args::Args;
+use cli::run_cli;
 
 fn main() {
     // const DEFAULT_INSTRUMENT: String = get_string();
@@ -28,5 +27,7 @@ fn main() {
     // Implement query for order creation, and tracking
     // Try implement using Router
     //
-    let args = Args::parse().run();
+    //Determine if we are running a tui, gui or cli
+    // Running a cli only for now
+    run_cli();
 }

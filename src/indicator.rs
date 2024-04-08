@@ -15,11 +15,10 @@ impl IndicatorData {
             indi_4: 32.0,
         }
     }
-    fn get() -> Result<Self, zmq::Error> {
-        let sockets = ConnectionSockets::initialize()?;
-        sockets.connect()?;
+    fn get() -> Result<Self, Box<dyn std::error::Error>> {
+        let sockets = ConnectionSockets::init_and_connect()?;
         let data = "TRADE;GET_INDICATOR_DATA";
-        sockets.request.send(data, 0)?;
+        sockets.request(data, 0)?;
 
         // Parse Indicator data to save
         let data = sockets.receive()?;
