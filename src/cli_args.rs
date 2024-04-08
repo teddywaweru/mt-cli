@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
 use data_parser::data_types::{HistoricalTickData, InstantRates, OpenTrades};
 
 #[derive(Parser)]
-#[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader4 and Rust", long_about=None)]
+#[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader5 and Rust", long_about=None)]
 /// Some application to do algorithmic trading with
 pub struct Args {
     // #[arg(short, long)]
@@ -30,7 +30,13 @@ impl Args {
                 let runalgo_instance =
                     RunAlgo::new(instrument, timeframe, duration, start, end).run();
             }
-            SubArgs::GetActiveTrades => todo!(),
+            SubArgs::GetActiveTrades => {
+                println!("Getting Active Trades");
+                let response = mt5_bridge::get_existing_trades().unwrap();
+
+                let open_trades = OpenTrades::parse_mt5(response);
+                println!("Current Trades:{:#?}", open_trades);
+            }
             SubArgs::GetAccountInfo => todo!(),
             SubArgs::GetInstantRates { instrument } => {
                 let response: InstantRates = InstantRates::get(&instrument);
@@ -49,6 +55,16 @@ impl Args {
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
             SubArgs::NewOtherThing { username } => todo!(),
+            SubArgs::TrackPrices => {
+                use crate::sockets::ConnectionSockets;
+                let sockets = ConnectionSockets::init_and_connect().unwrap();
+                let data = "TRACK_PRICES";
+                sockets.request(data, 0).unwrap();
+
+                // Parse Indicator data to save
+                let data = sockets.receive().unwrap();
+                println!("Here's the data : {:#?}", data);
+            }
         }
     }
 }
@@ -91,6 +107,7 @@ pub enum SubArgs {
         #[arg(long)]
         kind: OtherTradeKind,
     },
+    TrackPrices,
 }
 #[derive(Clone)]
 pub enum OtherTradeKind {
