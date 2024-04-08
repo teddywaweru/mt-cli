@@ -31,7 +31,12 @@ impl Default for ConnectionSockets {
     }
 }
 impl ConnectionSockets {
-    pub fn initialize(// ctx: &zmq::Context,
+    pub fn init_and_connect() -> Result<ConnectionSockets, Box<dyn std::error::Error>> {
+        let sockets = ConnectionSockets::initialize()?;
+        sockets.connect()?;
+        Ok(sockets)
+    }
+    fn initialize(// ctx: &zmq::Context,
                // states: Vec<zmq::SocketType>,
     ) -> Result<Self, zmq::Error> {
         let ctx: zmq::Context = zmq::Context::new();
@@ -56,7 +61,6 @@ impl ConnectionSockets {
 
     pub fn request(&self, data: &str, flag: i32) -> Result<&Self, zmq::Error> {
         self.request.send(data, flag)?;
-
         Ok(self)
     }
 
@@ -71,5 +75,12 @@ impl ConnectionSockets {
         };
 
         Ok(response)
+    }
+    pub fn disconnect(&self) -> Result<(), Box<dyn std::error::Error>> {
+        self.response.disconnect("tcp://127.0.0.1:32769")?;
+        self.request.disconnect("tcp://127.0.0.1:32768")?;
+        self.subscribe.disconnect("tcp://127.0.0.1:32770")?;
+
+        Ok(())
     }
 }
