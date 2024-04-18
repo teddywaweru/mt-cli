@@ -1,8 +1,9 @@
-use crate::mt5_bridge;
+use crate::mt5_bridge::Mt5Bridge;
 use crate::sockets::ConnectionSockets;
 use crate::test_algorithm::RunAlgo;
 use clap::{Parser, Subcommand};
-use data_parser::data_types::{HistoricalTickData, InstantRates, OpenTrades};
+use mt5::instant_rates::InstantRates;
+use mt5::tick::HistoricalTickData;
 
 #[derive(Parser)]
 #[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader5 and Rust", long_about=None)]
@@ -32,14 +33,14 @@ impl Args {
             }
             SubArgs::GetActiveTrades => {
                 println!("Getting Active Trades");
-                let response = mt5_bridge::get_existing_trades().unwrap();
+                let response = Mt5Bridge::init().get_existing_trades().unwrap();
 
-                let open_trades = OpenTrades::parse_mt5(response);
-                println!("Current Trades:{:#?}", open_trades);
+                // let open_trades = OpenTrades::parse_mt5(response);
+                println!("Current Trades:{:#?}", response);
             }
             SubArgs::GetAccountInfo => todo!(),
             SubArgs::GetInstantRates { instrument } => {
-                let response: InstantRates = InstantRates::get(&instrument);
+                let response = Mt5Bridge::init().get_instant_rates(&instrument);
                 println!("Response back: {:?}", response);
             }
             SubArgs::GetHistoricalTickData {
@@ -47,11 +48,30 @@ impl Args {
                 duration,
                 timeframe,
             } => {
-                let response = HistoricalTickData::get(timeframe);
+                let response = Mt5Bridge::init().get_historical_tick_data(timeframe);
                 println!("Response back: {:#?}", response);
             }
             SubArgs::GetIndicatorData => {}
-            SubArgs::ExecuteInstantTrade { symbol, lot } => todo!(),
+            SubArgs::ExecuteInstantTrade { symbol, lot } => {
+                //Requires the following to be provided:
+                //Symbol to trade, and percent to risk
+                //Trade will be calculated based on ATR value to determine lot, SL, tP
+                // Will need to determine if it's going to be an instant or one set for
+                // later...
+
+                let symbol = "EURUSD";
+                let risk: f32 = 0.02;
+                // trade_type: 0,
+                // symbol: "EURUSD".to_string(),
+                // price: 0.0,
+                // stop_loss: 500,
+                // take_profit: 500,
+                // comment: "Test trade".to_string(),
+                // lot_size: 0.01,
+                // magic: 123321,
+                // ticket: 0,
+                let response = Mt5Bridge::init().generate_trade(symbol, risk).unwrap();
+            }
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
             SubArgs::NewOtherThing { username } => todo!(),

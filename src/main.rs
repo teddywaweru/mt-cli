@@ -7,7 +7,6 @@
 //4. Tracing
 //5. SQLx
 //6. Clap
-mod account;
 mod cli;
 mod cli_args;
 mod indicator;
