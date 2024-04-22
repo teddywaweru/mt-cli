@@ -1,10 +1,10 @@
 // needs a struct that holds details of what the sim is about ie
-use crate::indicator::IndicatorData;
-use crate::sockets::ConnectionSockets;
+use mt5::IndicatorData;
+use mt5::ConnectionSockets;
 use chrono::{DateTime, Local, TimeZone};
 
 pub struct RunAlgo {
-    instrument: String,
+    symbol: String,
     timeframe: u32,
     duration: u32,
     start: DateTime<Local>,
@@ -12,7 +12,7 @@ pub struct RunAlgo {
 }
 impl RunAlgo {
     pub fn new(
-        instrument: String,
+        symbol: String,
         timeframe: u32,
         duration: u32,
         start: String,
@@ -26,7 +26,7 @@ impl RunAlgo {
             .expect("Unable to convert to the string to a DateTime format")
             .into();
         RunAlgo {
-            instrument,
+            symbol,
             timeframe,
             duration,
             start,
@@ -40,9 +40,9 @@ impl RunAlgo {
         let current_date: DateTime<Local> = Local::now();
         let current_date = self.start.format("%Y.%m.%d %H:%M:00");
         let current_date = self.end.format("%Y.%m.%d %H:%M:00");
-        // let hist_data: HistData = HistData::get(&self.instrument, self.timeframe, self.duration)?;
+        // let hist_data: HistData = HistData::get(&self.symbol, self.timeframe, self.duration)?;
         let hist_indicator_data: Vec<IndicatorData> =
-            IndicatorData::get_historical_data(&self.instrument, self.timeframe, self.duration)?;
+            IndicatorData::get_historical_data(&self.symbol, self.timeframe, self.duration)?;
 
         todo!()
     }

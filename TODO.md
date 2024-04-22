@@ -26,4 +26,6 @@
 
 
   calc.rs => How do we calculate for new trades?
+  New Trade: cli->mt5_bridge.generate -> user confirmation -> execute trade
+  needs to collect info to carry out transaction: AccountInfo, InstrumentInfo, Time?, SLs and TPs...
   => Need to be able to efficiently track values without blowing up the CPU

@@ -9,16 +9,12 @@
 //6. Clap
 mod cli;
 mod cli_args;
-mod indicator;
-mod mt5_bridge;
-mod sockets;
 mod test_algorithm;
-mod tick;
 
 use cli::run_cli;
 
 fn main() {
-    // const DEFAULT_INSTRUMENT: String = get_string();
+    // const DEFAULT_SYMBOL: String = get_string();
     // TODO
     // Implement args: make request, check response,
     // Implement query for historical data

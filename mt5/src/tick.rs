@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TickData {
-    // instrument: String,
+    // symbol: String,
     #[serde(flatten)]
     ohlc: OHLC,
     time: String,
@@ -16,34 +16,34 @@ impl Default for TickData {
     fn default() -> Self {
         TickData {
             ohlc: todo!(),
-            // instrument: todo!(),
+            // symbol: todo!(),
             time: todo!(),
             spread: todo!(),
             real_volume: todo!(),
             tick_volume: todo!(),
             // timeframe: todo!(),
-            // instrument: todo!(),
+            // symbol: todo!(),
         }
     }
 }
 impl TickData {
     ///Create a New TickData Struct
-    pub fn new(timeframe: String, instrument: String) -> Self {
+    pub fn new(timeframe: String, symbol: String) -> Self {
         TickData {
             ohlc: OHLC::default(),
             // timeframe,
-            // instrument,
+            // symbol,
             time: todo!(),
             spread: todo!(),
             real_volume: todo!(),
             tick_volume: todo!(),
-            // instrument: todo!(),
+            // symbol: todo!(),
         }
     }
     ///Get Requested Tick Data
     pub fn get_indicator_values(&self) -> Self {
         // Make a call to MT4 and get the values for the indicators that are wanted.
-        // Only requires the timeframe and instrument to calculate
+        // Only requires the timeframe and symbol to calculate
         // and time
         todo!()
     }

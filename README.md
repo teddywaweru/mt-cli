@@ -42,7 +42,7 @@ Data Structures
    /// trade margins
    /// test indicator
    /// find trading trend
-   /// subscribe to instrument
+   /// subscribe to symbol
    /// place trade
 
 ---

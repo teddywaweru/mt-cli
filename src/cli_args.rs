@@ -23,13 +23,13 @@ impl Args {
     pub fn run(self) {
         match self.subcmd {
             SubArgs::RunAlgo => {
-                let instrument = "EURUSD".to_owned();
+                let symbol = "EURUSD".to_owned();
                 let timeframe = 1440;
                 let duration = 240;
                 let start = "2020.01.01 00:00:00".to_owned();
                 let end = "2023.01.01 00:00:00".to_owned();
                 let runalgo_instance =
-                    RunAlgo::new(instrument, timeframe, duration, start, end).run();
+                    RunAlgo::new(symbol, timeframe, duration, start, end).run();
             }
             SubArgs::GetActiveTrades => {
                 println!("Getting Active Trades");
@@ -39,12 +39,12 @@ impl Args {
                 println!("Current Trades:{:#?}", response);
             }
             SubArgs::GetAccountInfo => todo!(),
-            SubArgs::GetInstantRates { instrument } => {
-                let response = Mt5Bridge::init().get_instant_rates(&instrument);
+            SubArgs::GetInstantRates { symbol } => {
+                let response = Mt5Bridge::init().get_instant_rates(&symbol);
                 println!("Response back: {:?}", response);
             }
             SubArgs::GetHistoricalTickData {
-                instrument,
+                symbol,
                 duration,
                 timeframe,
             } => {
@@ -101,11 +101,11 @@ pub enum SubArgs {
     GetActiveTrades,
     GetInstantRates {
         #[arg(short, long, default_value_t = String::from("EURUSD"))]
-        instrument: String,
+        symbol: String,
     },
     GetHistoricalTickData {
         #[arg(short, long, default_value_t = String::from("EURUSD"))]
-        instrument: String,
+        symbol: String,
 
         /// Amount of time for the scan, number of bars
         #[arg(short, long, default_value_t = 30)]
