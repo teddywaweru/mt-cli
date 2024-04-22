@@ -1,4 +1,4 @@
-use crate::{error::Mt5Error, parse};
+use crate::{error::Mt5Error, parse, Account, Symbol};
 use serde::{Deserialize, Serialize};
 use serde_json::Map;
 /// Trade Object Data for Generating New Trades

@@ -1,9 +1,8 @@
-use crate::mt5_bridge::Mt5Bridge;
-use crate::sockets::ConnectionSockets;
+use mt5::Mt5Bridge;
 use crate::test_algorithm::RunAlgo;
 use clap::{Parser, Subcommand};
-use mt5::instant_rates::InstantRates;
-use mt5::tick::HistoricalTickData;
+use mt5::InstantRates;
+use mt5::HistoricalTickData;
 
 #[derive(Parser)]
 #[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader5 and Rust", long_about=None)]
@@ -76,13 +75,10 @@ impl Args {
             SubArgs::OtherThing { password } => todo!(),
             SubArgs::NewOtherThing { username } => todo!(),
             SubArgs::TrackPrices => {
-                use crate::sockets::ConnectionSockets;
-                let sockets = ConnectionSockets::init_and_connect().unwrap();
                 let data = "TRACK_PRICES";
-                sockets.request(data, 0).unwrap();
+                Mt5Bridge::init().get_indicator_data(data);
 
                 // Parse Indicator data to save
-                let data = sockets.receive().unwrap();
                 println!("Here's the data : {:#?}", data);
             }
         }

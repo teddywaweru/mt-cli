@@ -15,6 +15,10 @@ mod parse;
 pub mod symbol;
 pub mod tick;
 pub mod trade;
+mod mt5_bridge;
+mod sockets;
+pub use mt5_bridge::Mt5Bridge;
+pub use sockets::ConnectionSockets;
 
 use crate::trade::Trade;
 use indicator::IndicatorData;

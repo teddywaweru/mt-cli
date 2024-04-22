@@ -33,12 +33,10 @@ impl Default for ConnectionSockets {
 impl ConnectionSockets {
     pub fn init_and_connect() -> Result<ConnectionSockets, Box<dyn std::error::Error>> {
         let sockets = ConnectionSockets::initialize()?;
-        sockets.connect()?;
+        // sockets.connect()?;
         Ok(sockets)
     }
-    fn initialize(// ctx: &zmq::Context,
-               // states: Vec<zmq::SocketType>,
-    ) -> Result<Self, zmq::Error> {
+    pub fn initialize() -> Result<Self, zmq::Error> {
         let ctx: zmq::Context = zmq::Context::new();
         let subscribe = ctx.socket(zmq::SUB)?;
         let request = ctx.socket(zmq::PUSH)?;
@@ -51,7 +49,7 @@ impl ConnectionSockets {
     }
 
     // TODO impl a config files that holds the port numbers.
-    fn connect(&self) -> Result<&Self, zmq::Error> {
+    pub fn connect(&self) -> Result<&Self, zmq::Error> {
         self.response.connect("tcp://127.0.0.1:32769")?;
         self.request.connect("tcp://127.0.0.1:32768")?;
         self.subscribe.connect("tcp://127.0.0.1:32770")?;
@@ -59,25 +57,32 @@ impl ConnectionSockets {
         Ok(self)
     }
 
-    pub fn request(&self, data: &str, flag: i32) -> Result<&Self, zmq::Error> {
-        self.request.send(data, flag)?;
-        Ok(self)
+    pub fn request(&self, data: &str, flag: i32) -> &Self {
+        self.connect();
+        self.request.send(data, flag).expect("Unable to ");
+        match self.request.send(data, flag) {
+            Ok(_) => self,
+            Err(e) => {
+                panic!("Unable to send request on sockets. \n Error: {e}")
+            }
+        }
     }
 
-    pub fn receive(&self) -> Result<String, zmq::Error> {
+    pub fn receive(&self) -> String {
         // let mut msg: zmq::Message;
         let flag = 0;
-        let response = match self.response.recv_string(flag)? {
+        let response = match self.response.recv_string(flag).unwrap() {
             Ok(response) => response,
             Err(e) => {
                 panic!("Failed to receive a valid message: {:?}", e)
             }
         };
 
-        Ok(response)
+        self.disconnect();
+        response
     }
     pub fn disconnect(&self) -> Result<(), Box<dyn std::error::Error>> {
-        self.response.disconnect("tcp://127.0.0.1:32769")?;
+        self.response.disconnect("tcp://127.0.0.1:32769").unwrap();
         self.request.disconnect("tcp://127.0.0.1:32768")?;
         self.subscribe.disconnect("tcp://127.0.0.1:32770")?;
 

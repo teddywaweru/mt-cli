@@ -8,9 +8,9 @@ pub struct InstantRates {
     ask: f32,
 }
 impl InstantRates {
-    pub fn get(instrument: &str) -> String {
+    pub fn get(symbol: &str) -> String {
         // TODO Generate the string using data constructs...
-        let request_instant_rate: String = format!("TRADE;INSTANT_RATE;_symbol;{instrument}");
+        let request_instant_rate: String = format!("TRADE;INSTANT_RATE;_symbol;{symbol}");
         let response = "".to_owned();
 
         // let response: String = ConnectionSockets::init_and_connect()
