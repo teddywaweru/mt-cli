@@ -3,26 +3,30 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
 
-pub(crate) mod account;
-pub mod calc;
+mod account;
 mod error;
 mod indicator;
-pub mod instant_rates;
+mod instant_rates;
 mod ohlc;
 mod open_trade;
-pub mod order;
+mod order;
 mod parse;
-pub mod symbol;
-pub mod tick;
-pub mod trade;
+mod symbol;
+mod tick;
+mod trade;
 mod mt5_bridge;
 mod sockets;
+
+pub use account::Account;
+pub use instant_rates::InstantRates;
+pub use symbol::{Symbol, Symbols};
+pub use tick::HistoricalTickData;
+pub use trade::{ Trade, OrderType };
+pub use order::Order;
 pub use mt5_bridge::Mt5Bridge;
+pub use indicator::IndicatorData;
 pub use sockets::ConnectionSockets;
 
-use crate::trade::Trade;
-use indicator::IndicatorData;
-use instant_rates::InstantRates;
 use open_trade::{OpenTrade, OpenTrades};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};

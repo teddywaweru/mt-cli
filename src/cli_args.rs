@@ -37,7 +37,12 @@ impl Args {
                 // let open_trades = OpenTrades::parse_mt5(response);
                 println!("Current Trades:{:#?}", response);
             }
-            SubArgs::GetAccountInfo => todo!(),
+            SubArgs::GetAccountInfo => {
+                println!("Getting Account Info");
+                let response = Mt5Bridge::init().get_account_info().unwrap();
+
+                println!("Account info: {:#?}", response);
+            },
             SubArgs::GetInstantRates { symbol } => {
                 let response = Mt5Bridge::init().get_instant_rates(&symbol);
                 println!("Response back: {:?}", response);
