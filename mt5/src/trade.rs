@@ -1,4 +1,4 @@
-use crate::{error::Mt5Error, parse, Account, Symbol};
+use crate::{error::Mt5Error, parse, Account, Mt5Bridge, Symbol};
 use serde::{Deserialize, Serialize};
 use serde_json::Map;
 /// Trade Object Data for Generating New Trades
@@ -17,14 +17,14 @@ pub struct Trade {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum OrderType {
-    OrderTypeBuy,
-    OrderTypeSell,
-    OrderTypeBuyLimit,
-    OrderTypeSellLimit,
-    OrderTypeBuyStop,
-    OrderTypeSellStop,
-    OrderTypeBuyStopLimit,
-    OrderTypeSellStopLimit,
+    OrderTypeBuy = 0,
+    OrderTypeSell = 1,
+    OrderTypeBuyLimit = 2,
+    OrderTypeSellLimit = 3,
+    OrderTypeBuyStop = 4,
+    OrderTypeSellStop = 5,
+    OrderTypeBuyStopLimit = 6,
+    OrderTypeSellStopLimit = 7,
 }
 impl Default for Trade {
     fn default() -> Self {
@@ -46,16 +46,17 @@ impl Trade {
         let risk_amount = account.current_balance * risk;
 
         // let account = Mt5Bridge::get_account_info();
+        let pip_value: f32;
         let lot_size: f32;
         let stop_loss: f32;
-        let pips: u32 = 100;
+        let pips: u32 = 28;
         let tp_multiplier: f32 = 1.0;
         let sl_multiplier: f32 = 1.5;
         let take_profit: f32;
         let price: f32;
         let comment: String;
-        let magic: u32;
-        let ticket: u32;
+        let magic: u32 = 0;
+        let ticket: u32 = 0;
 
         // CALCULATING LOT SIZE -> get pip value first
         // get instrument category
@@ -63,20 +64,27 @@ impl Trade {
         match order_type {
             OrderType::OrderTypeBuy => {
                 price = symbol.bid;
-                stop_loss = symbol.bid - (pips as f32 * sl_multiplier) as f32;
-                take_profit = symbol.bid + (pips as f32 * tp_multiplier) as f32;
-                comment = "".to_string();
-                lot_size = Self::calc_lot_size(&symbol, pips, &account.currency);
-                let lot_size = risk_amount * symbol.tick_value * symbol.point;
+                stop_loss = symbol.bid - (( pips * 10 ) as f32 * symbol.point * sl_multiplier) as f32;
+                take_profit = symbol.bid + (( pips * 10 ) as f32 * symbol.point * tp_multiplier) as f32;
+                comment = "testing".to_string();
+                lot_size = risk_amount /(symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier);
+                println!(
+                    "Symbol: {symbol:#?}\nLot_size: {lot_size}\n  \n take_profit: {take_profit},\n
+                     stop_loss: {stop_loss}\n risk_amount: {risk_amount}",
+                );
             }
             OrderType::OrderTypeSell => {
                 stop_loss = symbol.ask + (pips as f32 * sl_multiplier) as f32;
                 take_profit = symbol.ask - (pips as f32 * tp_multiplier) as f32;
+                panic!()
             }
-            OrderType::OrderTypeBuyLimit => {}
-            _ => {}
+            OrderType::OrderTypeBuyLimit => {
+            panic!()
+            }
+            _ => {
+                panic!()
+            }
         }
-        todo!();
         Trade {
             order_type,
             symbol,
@@ -89,10 +97,11 @@ impl Trade {
             ticket,
         }
     }
-    fn calc_lot_size(symbol: &Symbol, pips: u32, account_currency: &str) -> f32 {
+    #[allow(dead_code)]
+    fn calc_pip_value(symbol: &Symbol, account_curr: &str) -> f32 {
         let pip_value: f32;
-        let (base_curr, quote_curr) = symbol.name.split_at(2);
-        if account_currency == base_curr {
+        let (base_curr, quote_curr) = symbol.name.split_at(3);
+        if account_curr == base_curr {
             match quote_curr {
                 "JPY" => {
                     pip_value = symbol.bid.recip() * 100 as f32;
@@ -101,15 +110,46 @@ impl Trade {
                     pip_value = symbol.bid.recip() as f32;
                 }
             }
-        } else if account_currency == quote_curr {
+        } else if account_curr == quote_curr {
             pip_value = 1.0;
         } else {
-            todo!()
-            // use Mt5
-            // Mt5Bridge::
+            use crate::ConnectionSockets;
+            let sockets = ConnectionSockets::initialize().unwrap();
+            let data = "TRADE;GET_SYMBOLS";
+            println!("quote_curr: {quote_curr}");
+            let alt_symbol = Mt5Bridge::get_symbols()
+                .symbols
+                .iter()
+                .filter(|symbol| {
+                    let (alt_base, alt_quote) = symbol.name.split_at(3);
+                    if alt_base == account_curr || alt_quote == account_curr {
+                        true
+                    } else {
+                        false
+                    }
+                })
+                .filter(|symbol| {
+                    let (alt_base, alt_quote) = symbol.name.split_at(3);
+                    if alt_base == quote_curr || alt_quote == quote_curr {
+                        true
+                    } else {
+                        false
+                    }
+                })
+                .collect::<Vec<&Symbol>>()
+                .first()
+                .unwrap()
+                .to_owned()
+                .to_owned();
+
+            if &alt_symbol.name[0..3] == account_curr {
+                pip_value = 1 as f32 / alt_symbol.bid;
+            } else {
+                pip_value = 1 as f32 * alt_symbol.bid;
+            }
         }
 
-        todo!()
+        pip_value
     }
     pub fn from_mt5_response(data: &str) -> Self {
         use crate::error::Mt5Error;
@@ -141,11 +181,11 @@ impl Trade {
             }
         }
     }
-    pub fn generate_request(&self) -> String {
+    pub fn generate_request(self) -> String {
         let data = format!(
-            "TRADE;OPEN;{:#?};{:#?};{};{};{};{};{};{};{},",
-            self.order_type,
-            self.symbol,
+            "TRADE;OPEN;{:#?};{};{:.04};{:.04};{};{:.02};{:.02};{};{},",
+            self.order_type as u8,
+            self.symbol.name,
             self.price,
             self.stop_loss,
             self.take_profit,

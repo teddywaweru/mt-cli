@@ -11,7 +11,6 @@ impl Default for Ports {
         Ports::Request(32770)
     }
 }
-#[derive()]
 pub struct ConnectionSockets {
     pub request: zmq::Socket,
     pub response: zmq::Socket,
@@ -58,8 +57,7 @@ impl ConnectionSockets {
     }
 
     pub fn request(&self, data: &str, flag: i32) -> &Self {
-        self.connect();
-        self.request.send(data, flag).expect("Unable to ");
+        let _ = self.connect();
         match self.request.send(data, flag) {
             Ok(_) => self,
             Err(e) => {
@@ -72,13 +70,15 @@ impl ConnectionSockets {
         // let mut msg: zmq::Message;
         let flag = 0;
         let response = match self.response.recv_string(flag).unwrap() {
-            Ok(response) => response,
+            Ok(response) => {
+                response
+            }
             Err(e) => {
                 panic!("Failed to receive a valid message: {:?}", e)
             }
         };
 
-        self.disconnect();
+        let _ = self.disconnect();
         response
     }
     pub fn disconnect(&self) -> Result<(), Box<dyn std::error::Error>> {

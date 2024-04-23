@@ -1,8 +1,8 @@
-use mt5::Mt5Bridge;
 use crate::test_algorithm::RunAlgo;
 use clap::{Parser, Subcommand};
-use mt5::InstantRates;
 use mt5::HistoricalTickData;
+use mt5::InstantRates;
+use mt5::Mt5Bridge;
 
 #[derive(Parser)]
 #[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader5 and Rust", long_about=None)]
@@ -27,24 +27,23 @@ impl Args {
                 let duration = 240;
                 let start = "2020.01.01 00:00:00".to_owned();
                 let end = "2023.01.01 00:00:00".to_owned();
-                let runalgo_instance =
-                    RunAlgo::new(symbol, timeframe, duration, start, end).run();
+                let runalgo_instance = RunAlgo::new(symbol, timeframe, duration, start, end).run();
             }
             SubArgs::GetActiveTrades => {
                 println!("Getting Active Trades");
-                let response = Mt5Bridge::init().get_existing_trades().unwrap();
+                let response = Mt5Bridge::get_existing_trades().unwrap();
 
                 // let open_trades = OpenTrades::parse_mt5(response);
                 println!("Current Trades:{:#?}", response);
             }
             SubArgs::GetAccountInfo => {
                 println!("Getting Account Info");
-                let response = Mt5Bridge::init().get_account_info().unwrap();
+                let response = Mt5Bridge::get_account_info().unwrap();
 
                 println!("Account info: {:#?}", response);
-            },
+            }
             SubArgs::GetInstantRates { symbol } => {
-                let response = Mt5Bridge::init().get_instant_rates(&symbol);
+                let response = Mt5Bridge::get_instant_rates(&symbol);
                 println!("Response back: {:?}", response);
             }
             SubArgs::GetHistoricalTickData {
@@ -52,7 +51,7 @@ impl Args {
                 duration,
                 timeframe,
             } => {
-                let response = Mt5Bridge::init().get_historical_tick_data(timeframe);
+                let response = Mt5Bridge::get_historical_tick_data(timeframe);
                 println!("Response back: {:#?}", response);
             }
             SubArgs::GetIndicatorData => {}
@@ -63,7 +62,7 @@ impl Args {
                 // Will need to determine if it's going to be an instant or one set for
                 // later...
 
-                let symbol = "EURUSD";
+                let symbol = "EURGBP";
                 let risk: f32 = 0.02;
                 // trade_type: 0,
                 // symbol: "EURUSD".to_string(),
@@ -74,14 +73,15 @@ impl Args {
                 // lot_size: 0.01,
                 // magic: 123321,
                 // ticket: 0,
-                let response = Mt5Bridge::init().generate_trade(symbol, risk).unwrap();
+                let response = Mt5Bridge::generate_trade(symbol, risk).unwrap();
+
             }
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
             SubArgs::NewOtherThing { username } => todo!(),
             SubArgs::TrackPrices => {
                 let data = "TRACK_PRICES";
-                Mt5Bridge::init().get_indicator_data(data);
+                Mt5Bridge::get_indicator_data(data);
 
                 // Parse Indicator data to save
                 println!("Here's the data : {:#?}", data);

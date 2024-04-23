@@ -1,6 +1,6 @@
 use crate::parse;
+use serde::{Deserialize, Serialize};
 use serde_json;
-use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Account {
@@ -18,6 +18,30 @@ pub struct Account {
 // 08:56', 'name':'Teddy Waweru Njuguna', 'balance':40862.08000000, 'equity':41827.15000000, 'profit':965.07000000, 'margin_free':41003.31000000,
 //  'leverage' :400}]}"
 
+impl Default for Account {
+    fn default() -> Self {
+        let account_number = 65;
+        let name = "njuwate".to_string();
+        let current_time = "2024".to_string();
+        let current_balance = 3434.233;
+        let current_equity = 3234.55;
+        let leverage = 500;
+        let currency = "USD".to_string();
+        let free_margin = 3543.34;
+        let current_profit = 333.2;
+        Self {
+            account_number,
+            name,
+            current_time,
+            current_balance,
+            current_equity,
+            leverage,
+            currency,
+            free_margin,
+            current_profit,
+        }
+    }
+}
 impl Account {
     pub(crate) fn get_balance() -> f32 {
         todo!()
