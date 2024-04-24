@@ -64,19 +64,17 @@ impl Trade {
         match order_type {
             OrderType::OrderTypeBuy => {
                 price = symbol.bid;
-                stop_loss = symbol.bid - (( pips * 10 ) as f32 * symbol.point * sl_multiplier) as f32;
+                stop_loss = price - (( pips * 10 ) as f32 * symbol.point * sl_multiplier) as f32;
                 take_profit = symbol.bid + (( pips * 10 ) as f32 * symbol.point * tp_multiplier) as f32;
                 comment = "testing".to_string();
-                lot_size = risk_amount /(symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier);
-                println!(
-                    "Symbol: {symbol:#?}\nLot_size: {lot_size}\n  \n take_profit: {take_profit},\n
-                     stop_loss: {stop_loss}\n risk_amount: {risk_amount}",
-                );
+                lot_size = risk_amount /(symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier) / 10 as f32;
             }
             OrderType::OrderTypeSell => {
-                stop_loss = symbol.ask + (pips as f32 * sl_multiplier) as f32;
-                take_profit = symbol.ask - (pips as f32 * tp_multiplier) as f32;
-                panic!()
+                price = symbol.ask;
+                stop_loss = price + ((pips * 10) as f32 * symbol.point * sl_multiplier) as f32;
+                take_profit = price - ((pips * 10) as f32 * symbol.point * tp_multiplier) as f32;
+                comment  =  "testing sells".to_string();
+                lot_size = risk_amount / (symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier) / 10 as f32;
             }
             OrderType::OrderTypeBuyLimit => {
             panic!()
@@ -183,7 +181,7 @@ impl Trade {
     }
     pub fn generate_request(self) -> String {
         let data = format!(
-            "TRADE;OPEN;{:#?};{};{:.04};{:.04};{};{:.02};{:.02};{};{},",
+            "TRADE;OPEN;{:#?};{};{};{};{};{};{:.02};{};{},",
             self.order_type as u8,
             self.symbol.name,
             self.price,
