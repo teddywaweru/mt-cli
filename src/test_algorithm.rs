@@ -1,7 +1,7 @@
 // needs a struct that holds details of what the sim is about ie
-use mt5::IndicatorData;
-use mt5::ConnectionSockets;
 use chrono::{DateTime, Local, TimeZone};
+use mt5::ConnectionSockets;
+use mt5::Indicator;
 
 pub struct RunAlgo {
     symbol: String,
@@ -11,13 +11,7 @@ pub struct RunAlgo {
     end: DateTime<Local>,
 }
 impl RunAlgo {
-    pub fn new(
-        symbol: String,
-        timeframe: u32,
-        duration: u32,
-        start: String,
-        end: String,
-    ) -> Self {
+    pub fn new(symbol: String, timeframe: u32, duration: u32, start: String, end: String) -> Self {
         // let start: DateTime<Local> = DateTime::naive_local(&self)
         let start: DateTime<Local> = DateTime::parse_from_str(&start, "%Y.%m.%d %H:%M:00")
             .expect("Unable to convert to the string to a DateTime format")
@@ -41,8 +35,8 @@ impl RunAlgo {
         let current_date = self.start.format("%Y.%m.%d %H:%M:00");
         let current_date = self.end.format("%Y.%m.%d %H:%M:00");
         // let hist_data: HistData = HistData::get(&self.symbol, self.timeframe, self.duration)?;
-        let hist_indicator_data: Vec<IndicatorData> =
-            IndicatorData::get_historical_data(&self.symbol, self.timeframe, self.duration)?;
+        // let hist_indicator_data: Vec<Indicator> =
+        //     Indicator::get_historical_data(&self.symbol, self.timeframe, self.duration)?;
 
         todo!()
     }

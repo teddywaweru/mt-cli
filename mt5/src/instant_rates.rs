@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::Mt5Bridge;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InstantRates {
@@ -12,6 +13,7 @@ impl InstantRates {
         // TODO Generate the string using data constructs...
         let request_instant_rate: String = format!("TRADE;INSTANT_RATE;_symbol;{symbol}");
         let response = "".to_owned();
+        let response = Mt5Bridge::get_instant_rates(symbol);
 
         // let response: String = ConnectionSockets::init_and_connect()
         //     .expect("Unable to connect to the connection sockets")

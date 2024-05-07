@@ -48,7 +48,7 @@ impl Account {
     }
     pub fn parse_mt5_response(data: &str) -> Result<Account, serde_json::Error> {
         let data = data.replace("'", "\"");
-        let data = parse::remove_action(&data);
+        let data = parse::sanitize_mt5_response(&data);
         let data: Account = serde_json::from_str(&data)?;
 
         Ok(data)

@@ -70,9 +70,7 @@ impl ConnectionSockets {
         // let mut msg: zmq::Message;
         let flag = 0;
         let response = match self.response.recv_string(flag).unwrap() {
-            Ok(response) => {
-                response
-            }
+            Ok(response) => response,
             Err(e) => {
                 panic!("Failed to receive a valid message: {:?}", e)
             }

@@ -51,11 +51,15 @@ impl Args {
                 duration,
                 timeframe,
             } => {
-                let response = Mt5Bridge::get_historical_tick_data(timeframe);
-                println!("Response back: {:#?}", response);
+                // let response = Mt5Bridge::get_historical_tick_data(timeframe.into());
+                // println!("Response back: {:#?}", response);
             }
             SubArgs::GetIndicatorData => {}
-            SubArgs::ExecuteInstantTrade { symbol, lot } => {
+            SubArgs::ExecuteInstantTrade {
+                symbol,
+                order_type,
+                risk,
+            } => {
                 //Requires the following to be provided:
                 //Symbol to trade, and percent to risk
                 //Trade will be calculated based on ATR value to determine lot, SL, tP
@@ -73,8 +77,7 @@ impl Args {
                 // lot_size: 0.01,
                 // magic: 123321,
                 // ticket: 0,
-                let response = Mt5Bridge::generate_trade(symbol, risk).unwrap();
-
+                let response = Mt5Bridge::generate_trade(&symbol, order_type, risk,  ).unwrap();
             }
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
@@ -85,6 +88,13 @@ impl Args {
 
                 // Parse Indicator data to save
                 println!("Here's the data : {:#?}", data);
+            }
+            SubArgs::GenNewTrade {
+                symbol,
+                order_type,
+                risk,
+            } => {
+                Mt5Bridge::generate_trade(&symbol, order_type, risk);
             }
         }
     }
@@ -122,13 +132,27 @@ pub enum SubArgs {
         symbol: String,
 
         #[arg(long, default_value_t = 1.0)]
-        lot: f32,
+        risk: f32,
+
+        #[arg(long, default_value_t = String::from("buy"))]
+        order_type: String,
+
     },
     ExecuteOtherTrade {
         #[arg(long)]
         kind: OtherTradeKind,
     },
     TrackPrices,
+    GenNewTrade {
+        #[arg(long, default_value_t = String::from("EURUSD"))]
+        symbol: String,
+
+        #[arg(long, default_value_t = String::from("buy"))]
+        order_type: String,
+
+        #[arg(long, default_value_t = 0.02)]
+        risk: f32,
+    },
 }
 #[derive(Clone)]
 pub enum OtherTradeKind {

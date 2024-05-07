@@ -1,6 +1,9 @@
-use serde::{Serialize,Deserialize};
 use crate::parse;
-#[derive(Debug,Clone, Serialize, Deserialize)]
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Serialize,
+};
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Symbol {
     pub name: String,
     pub sector: String,
@@ -8,14 +11,8 @@ pub struct Symbol {
     pub point: f32,
     pub bid: f32,
     pub ask: f32,
-    pub tick_value: f32
+    pub tick_value: f32,
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Symbols {
-    pub symbols: Vec<Symbol>
-}
-
 impl Default for Symbol {
     fn default() -> Self {
         let name = "EURUSD_default".to_string();
@@ -25,7 +22,7 @@ impl Default for Symbol {
         let bid = 234.23;
         let ask = 234.2;
         let tick_value = 33.3;
-         Symbol {
+        Symbol {
             name,
             sector,
             spread,
@@ -34,28 +31,47 @@ impl Default for Symbol {
             ask,
             tick_value,
         }
-        
     }
+}
+impl Symbol {
+    pub fn parse_mt5_response(data: &str) -> Self {
+        let data = parse::sanitize_mt5_response(&data);
+
+        let symbol = match serde_json::from_str(&data) {
+            Ok(symbol) => symbol,
+            Err(e) => {
+                panic!("Unable to parse string to Symbol object. \n Received String: \n {data} \n Error: {e}")
+            }
+        };
+        println!("Symbol Received from mt5: {:#?}", symbol);
+
+        symbol
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Symbols {
+    pub symbols: Vec<Symbol>,
 }
 
 impl Default for Symbols {
     fn default() -> Self {
         Symbols {
-            symbols: vec![Symbol::default()]
+            symbols: vec![Symbol::default()],
         }
-        
     }
 }
 impl Symbols {
     pub fn parse_mt5_response(data: &str) -> Self {
         let data = data.replace("'", "\"");
-        let data = parse::remove_action(&data);
+        let data = parse::sanitize_mt5_response(&data);
         let data = match serde_json::from_str(&data) {
             Ok(data) => data,
             Err(e) => {
                 panic!("Unable to parse string to Symbols object. \n Received String: \n {data} \n Error: {e}")
             }
         };
+        println!("Symbols Received from mt5: {:#?}", data);
 
         data
     }

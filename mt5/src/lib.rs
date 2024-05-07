@@ -7,25 +7,30 @@ mod account;
 mod error;
 mod indicator;
 mod instant_rates;
+mod mt5_bridge;
 mod ohlc;
 mod open_trade;
 mod order;
 mod parse;
+mod sockets;
 mod symbol;
 mod tick;
 mod trade;
-mod mt5_bridge;
-mod sockets;
+mod timeframe;
+
 
 pub use account::Account;
+pub use indicator::Indicator;
 pub use instant_rates::InstantRates;
-pub use symbol::{Symbol, Symbols};
-pub use tick::HistoricalTickData;
-pub use trade::{ Trade, OrderType };
-pub use order::Order;
 pub use mt5_bridge::Mt5Bridge;
-pub use indicator::IndicatorData;
+pub use order::Order;
 pub use sockets::ConnectionSockets;
+pub use symbol::{Symbol, Symbols};
+pub use tick::{HistoricalTickDataRequest, HistoricalTickData };
+pub use trade::{OrderType, Trade};
+pub use timeframe::Timeframe;
+pub use ohlc::OHLC;
+
 
 use open_trade::{OpenTrade, OpenTrades};
 use serde::{Deserialize, Serialize};
