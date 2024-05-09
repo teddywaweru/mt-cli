@@ -1,11 +1,11 @@
-use crate::{Indicator, InstantRates, OpenTrade, OpenTrades, Trade};
+use crate::{Indicator, InstantRates, OpenTrade, OpenTrades, Order};
 use serde_json::{Map, Value};
-fn parse_trade(data: String) -> Result<Trade, serde_json::Error> {
-    let mut trade: Map<String, Value> = serde_json::from_str(&data)?;
-    trade.remove("action");
-    let data = serde_json::to_string(&trade)?;
-    let trade: Trade = serde_json::from_str(&data)?;
-    Ok(trade)
+fn parse_trade(data: String) -> Result<Order, serde_json::Error> {
+    let mut data: Map<String, Value> = serde_json::from_str(&data)?;
+    data.remove("action");
+    let data = serde_json::to_string(&data)?;
+    let order: Order = serde_json::from_str(&data)?;
+    Ok(order)
 }
 /// Replace single quotations with double for parsing with serde_json
 /// Remove the action key term located in almost every request.

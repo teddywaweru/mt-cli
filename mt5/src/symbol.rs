@@ -1,9 +1,9 @@
-use crate::parse;
+use crate::{ parse, OrderTypeFilling, serde_order_type_filling };
 use serde::{
     de::{self, Visitor},
     Deserialize, Serialize,
 };
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Symbol {
     pub name: String,
     pub sector: String,
@@ -12,6 +12,8 @@ pub struct Symbol {
     pub bid: f32,
     pub ask: f32,
     pub tick_value: f32,
+    #[serde(with = "serde_order_type_filling")]
+    pub type_filling: OrderTypeFilling
 }
 impl Default for Symbol {
     fn default() -> Self {
@@ -22,6 +24,7 @@ impl Default for Symbol {
         let bid = 234.23;
         let ask = 234.2;
         let tick_value = 33.3;
+        let type_filling = OrderTypeFilling::default();
         Symbol {
             name,
             sector,
@@ -30,6 +33,7 @@ impl Default for Symbol {
             bid,
             ask,
             tick_value,
+            type_filling
         }
     }
 }

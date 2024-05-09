@@ -15,7 +15,6 @@ mod parse;
 mod sockets;
 mod symbol;
 mod tick;
-mod trade;
 mod timeframe;
 
 
@@ -23,12 +22,12 @@ pub use account::Account;
 pub use indicator::Indicator;
 pub use instant_rates::InstantRates;
 pub use mt5_bridge::Mt5Bridge;
-pub use order::Order;
+// pub use order::Order;
 pub use sockets::ConnectionSockets;
 pub use symbol::{Symbol, Symbols};
 pub use tick::{HistoricalTickDataRequest, HistoricalTickData };
-pub use trade::{OrderType, Trade};
-pub use timeframe::Timeframe;
+pub use order::{OrderType, Order, OrderTypeFilling, serde_order_type_filling};
+pub use timeframe::{serde_timeframe, Timeframe };
 pub use ohlc::OHLC;
 
 

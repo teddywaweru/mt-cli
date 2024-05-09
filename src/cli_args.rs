@@ -77,7 +77,7 @@ impl Args {
                 // lot_size: 0.01,
                 // magic: 123321,
                 // ticket: 0,
-                let response = Mt5Bridge::generate_trade(&symbol, order_type, risk,  ).unwrap();
+                let response = Mt5Bridge::generate_trade(&symbol, order_type, risk).unwrap();
             }
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
@@ -136,7 +136,6 @@ pub enum SubArgs {
 
         #[arg(long, default_value_t = String::from("buy"))]
         order_type: String,
-
     },
     ExecuteOtherTrade {
         #[arg(long)]

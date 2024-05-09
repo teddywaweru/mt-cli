@@ -1,31 +1,14 @@
-use crate::{Mt5Date, Symbol, Timeframe, OHLC};
+use crate::{Symbol, Timeframe, serde_timeframe, OHLC};
 use chrono::{prelude::*, Utc};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HistoricalTickData {
-    #[serde(deserialize_with = "deserialize_timeframe")]
+    #[serde(with = "serde_timeframe")]
     timeframe: Timeframe,
     pub ticks: Vec<OHLC>,
 }
-use serde::Deserializer;
-fn deserialize_timeframe<'de, D>(deserializer: D) -> Result<Timeframe, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s = String::deserialize(deserializer)?;
 
-    let timeframe = match s.as_str() {
-        "1" => Timeframe::M1,
-        "10" => Timeframe::M10,
-        "30" => Timeframe::M30,
-        "16385" => Timeframe::H1,
-        "16408" => Timeframe::D1,
-        _ => panic!("Unable to Deserialize Timeframe with value: {s}"),
-    };
-
-    Ok(timeframe)
-}
 impl HistoricalTickData {
     // pub fn get(duration: u32) -> String {
     //     let request = "HIST;EURUSD;1440;2023.08.01 00:00:00;2023.08.4 00:00:00";

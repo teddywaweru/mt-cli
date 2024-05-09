@@ -5,9 +5,9 @@
 use crate::sockets::ConnectionSockets;
 use crate::{
     Account, HistoricalTickData, HistoricalTickDataRequest, InstantRates, OpenTrade, OrderType,
-    Symbol, Symbols, Timeframe, Trade,
+    Symbol, Symbols, Timeframe, Order,
 };
-use chrono::{prelude::*, Utc};
+use chrono::{DateTime, Utc};
 //TRADES
 
 pub struct Mt5Bridge {
@@ -92,7 +92,7 @@ impl Mt5Bridge {
 
         //Static OrderType currently
         let order_type = OrderType::from(order_type);
-        let request = Trade::new_trade(symbol, order_type, risk, account).generate_request();
+        let request = Order::new_order(symbol, order_type, risk, account).generate_request();
 
         let response = Mt5Bridge::init().sockets.request(&request, 0).receive();
         let response = OpenTrade::from_mt5_response(&response);

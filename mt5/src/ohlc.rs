@@ -4,7 +4,7 @@ use serde_json;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OHLC {
-    #[serde(with = "mt5_date_serde")]
+    #[serde(with = "serde_mt5_date")]
     time: DateTime<Utc>,
     pub open: f32,
     pub close: f32,
@@ -35,7 +35,7 @@ impl OHLC {
     }
 }
 
-mod mt5_date_serde {
+mod serde_mt5_date {
     use chrono::{DateTime, NaiveDateTime, Utc};
     use serde::{Deserialize, Deserializer, Serializer};
 
