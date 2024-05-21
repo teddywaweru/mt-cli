@@ -1,5 +1,5 @@
 use crate::test_algorithm::RunAlgo;
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use mt5::HistoricalTickData;
 use mt5::InstantRates;
 use mt5::Mt5Bridge;
@@ -33,7 +33,6 @@ impl Args {
                 println!("Getting Active Trades");
                 let response = Mt5Bridge::get_existing_trades().unwrap();
 
-                // let open_trades = OpenTrades::parse_mt5(response);
                 println!("Current Trades:{:#?}", response);
             }
             SubArgs::GetAccountInfo => {
@@ -66,18 +65,10 @@ impl Args {
                 // Will need to determine if it's going to be an instant or one set for
                 // later...
 
-                let symbol = "EURGBP";
-                let risk: f32 = 0.02;
-                // trade_type: 0,
-                // symbol: "EURUSD".to_string(),
-                // price: 0.0,
-                // stop_loss: 500,
-                // take_profit: 500,
-                // comment: "Test trade".to_string(),
-                // lot_size: 0.01,
-                // magic: 123321,
-                // ticket: 0,
-                let response = Mt5Bridge::generate_trade(&symbol, order_type, risk).unwrap();
+                println!("Some symbols are not defined. Default values will be used as:\n
+                         Symbol: EURUSD \n OrderType: buy\n Risk: 0.02");
+
+                let response = Mt5Bridge::generate_order(&symbol, order_type, risk);
             }
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
@@ -94,7 +85,7 @@ impl Args {
                 order_type,
                 risk,
             } => {
-                Mt5Bridge::generate_trade(&symbol, order_type, risk);
+                Mt5Bridge::generate_order(&symbol, order_type, risk);
             }
         }
     }
@@ -131,7 +122,7 @@ pub enum SubArgs {
         #[arg(long, default_value_t = String::from("EURUSD"))]
         symbol: String,
 
-        #[arg(long, default_value_t = 1.0)]
+        #[arg(long, default_value_t = 0.02)]
         risk: f32,
 
         #[arg(long, default_value_t = String::from("buy"))]
@@ -139,7 +130,7 @@ pub enum SubArgs {
     },
     ExecuteOtherTrade {
         #[arg(long)]
-        kind: OtherTradeKind,
+        kind: String,
     },
     TrackPrices,
     GenNewTrade {
@@ -153,15 +144,15 @@ pub enum SubArgs {
         risk: f32,
     },
 }
-#[derive(Clone)]
-pub enum OtherTradeKind {
-    BuyStop,
-    SellStop,
-    BuyLimit,
-    SellLimit,
-}
-impl From<String> for OtherTradeKind {
-    fn from(value: String) -> Self {
-        todo!()
-    }
-}
+// #[derive(Clone)]
+// pub enum OtherTradeKind {
+//     BuyStop,
+//     SellStop,
+//     BuyLimit,
+//     SellLimit,
+// }
+// impl From<String> for OtherTradeKind {
+//     fn from(value: String) -> Self {
+//         todo!()
+//     }
+// }

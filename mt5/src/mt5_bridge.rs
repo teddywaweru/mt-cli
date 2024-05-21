@@ -4,8 +4,8 @@
 // Account Info
 use crate::sockets::ConnectionSockets;
 use crate::{
-    Account, HistoricalTickData, HistoricalTickDataRequest, InstantRates, OpenTrade, OrderType,
-    Symbol, Symbols, Timeframe, Order,
+    Account, HistoricalTickData, HistoricalTickDataRequest, InstantRates, OpenTrade, Order,
+    OrderType, Symbol, Symbols, Timeframe,
 };
 use chrono::{DateTime, Utc};
 //TRADES
@@ -14,8 +14,15 @@ pub struct Mt5Bridge {
     sockets: ConnectionSockets,
 }
 
-// Get information from mt5
+// Get generic information from mt5
 impl Mt5Bridge {
+    //TICK DATA
+    fn get_tick_data() {
+        todo!()
+    }
+    fn get_ohlc_data() {
+        todo!()
+    }
     pub fn get_symbol_info(symbol: &str) -> Symbol {
         // TODO only get single symbol, instead of array
         // let symbols = Self::get_symbols();
@@ -37,7 +44,42 @@ impl Mt5Bridge {
 }
 
 // Execute Operations
-impl Mt5Bridge {}
+impl Mt5Bridge {
+    pub fn generate_order(
+        symbol: &str,
+        order_type: String,
+        risk: f32,
+    ) -> OpenTrade{
+        let account = Self::get_account_info()?;
+        let symbol = Self::get_symbol_info(symbol);
+
+        //Only processing trades in currency pairs only currently
+        if symbol.sector != "Currency" {
+            panic!(
+                "Unable to generate trades for symbols that are not in the Currency sector. \n
+                  Received symbol: {symbol:#?}"
+            );
+        }
+
+        //Static OrderType currently
+        let order_type = OrderType::from(order_type);
+        let request = Order::new_order(symbol, order_type, risk, account).generate_request();
+
+        let response = Mt5Bridge::init().sockets.request(&request, 0).receive();
+        let response = OpenTrade::from_mt5_response(&response);
+
+        println!("Response back on OPEN_TRADE:\n {:#?}", response);
+
+        Ok(())
+    }
+
+    fn modify_trade() {
+        todo!()
+    }
+    fn close_trade() {
+        todo!()
+    }
+}
 
 // Collect Data Reports
 impl Mt5Bridge {
@@ -78,46 +120,9 @@ impl Mt5Bridge {
 
         response
     }
-    pub fn generate_trade(symbol: &str, order_type: String, risk: f32) -> Result<(), Box<dyn std::error::Error>> {
-        let account = Self::get_account_info()?;
-        let symbol = Self::get_symbol_info(symbol);
-
-        //Only processing trades in currency pairs only currently
-        if symbol.sector != "Currency" {
-            panic!(
-                "Unable to generate trades for symbols that are not in the Currency sector. \n
-                  Received symbol: {symbol:#?}"
-            );
-        }
-
-        //Static OrderType currently
-        let order_type = OrderType::from(order_type);
-        let request = Order::new_order(symbol, order_type, risk, account).generate_request();
-
-        let response = Mt5Bridge::init().sockets.request(&request, 0).receive();
-        let response = OpenTrade::from_mt5_response(&response);
-
-        println!("Response back on OPEN_TRADE:\n {:#?}", response);
-
-        Ok(())
-    }
-    fn modify_trade() {
-        todo!()
-    }
-    fn close_trade() {
-        todo!()
-    }
-
-    //TICK DATA
-    fn get_tick_data() {
-        todo!()
-    }
-    fn get_ohlc_data() {
-        todo!()
-    }
 
     //ACCOUNT
-    pub fn get_account_info() -> Result<Account, Box<dyn std::error::Error>> {
+    pub fn get_account_info() -> Account {
         let bridge = Self::init();
         let data = "DATA;GET_ACCOUNT_INFO;";
 
@@ -133,14 +138,14 @@ impl Mt5Bridge {
         todo!()
     }
 
-    pub fn mt5_date_from(date: chrono::DateTime<Utc>) -> String {
-        let date = std::time::Instant::now();
-        let date = format!("{:#?}", date);
-        println!("Here's the date: {date}");
-        todo!()
-        // let date: String = date.into();
-        // String::from(date)
-    }
+    // pub fn mt5_date_from(date: chrono::DateTime<Utc>) -> String {
+    //     let date = std::time::Instant::now();
+    //     let date = format!("{:#?}", date);
+    //     println!("Here's the date: {date}");
+    //     todo!()
+    //     // let date: String = date.into();
+    //     // String::from(date)
+    // }
 }
 // pub fn get_existing_trades() -> Result<String, Box<dyn std::error::Error>> {
 //     let data = "TRADE;GET_OPEN_TRADES";
