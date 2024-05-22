@@ -9,7 +9,7 @@ mod indicator;
 mod instant_rates;
 mod mt5_bridge;
 mod ohlc;
-mod open_trade;
+mod trade;
 mod order;
 mod parse;
 mod sockets;
@@ -31,7 +31,7 @@ pub use timeframe::{serde_timeframe, Timeframe };
 pub use ohlc::OHLC;
 
 
-use open_trade::{OpenTrade, OpenTrades};
+use trade::{OpenTrade, OpenTrades};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 

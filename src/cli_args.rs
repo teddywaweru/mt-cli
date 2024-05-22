@@ -31,19 +31,19 @@ impl Args {
             }
             SubArgs::GetActiveTrades => {
                 println!("Getting Active Trades");
-                let response = Mt5Bridge::get_existing_trades().unwrap();
+                let active_trades = Mt5Bridge::get_existing_trades().unwrap();
 
-                println!("Current Trades:{:#?}", response);
+                println!("Current Trades:{:#?}", active_trades);
             }
             SubArgs::GetAccountInfo => {
                 println!("Getting Account Info");
-                let response = Mt5Bridge::get_account_info().unwrap();
+                let account = Mt5Bridge::get_account_info();
 
-                println!("Account info: {:#?}", response);
+                println!("Account info: {:#?}", account);
             }
             SubArgs::GetInstantRates { symbol } => {
-                let response = Mt5Bridge::get_instant_rates(&symbol);
-                println!("Response back: {:?}", response);
+                let instant_rates = Mt5Bridge::get_instant_rates(&symbol);
+                println!("Response back: {:?}", instant_rates);
             }
             SubArgs::GetHistoricalTickData {
                 symbol,

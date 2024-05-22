@@ -1,4 +1,4 @@
-use crate::{Indicator, InstantRates, OpenTrade, OpenTrades, Order};
+use crate::{Indicator, InstantRates, OpenTrade, Order};
 use serde_json::{Map, Value};
 fn parse_trade(data: String) -> Result<Order, serde_json::Error> {
     let mut data: Map<String, Value> = serde_json::from_str(&data)?;
@@ -37,8 +37,6 @@ pub fn parse_indicator_data(data: String) -> Result<Indicator, serde_json::Error
     // Ok(indicator_data)
     todo!()
 }
-
-
 
 #[cfg(test)]
 mod parse_data_tests {

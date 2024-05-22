@@ -46,16 +46,20 @@ impl Account {
     pub(crate) fn get_balance() -> f32 {
         todo!()
     }
-    pub fn parse_mt5_response(data: &str) -> Account {
+    pub fn parse_mt5_response(data: &str) -> Account{
         let data = parse::sanitize_mt5_response(&data);
-        let data: Account = match serde_json::from_str(&data) {
-            Ok(data) => data,
-            Err(e) => {
-                panic!("Unable to parse Account Data collected from MT5:\n
-                       String Received: {}, \n Error: {}", &data, e);
-            },
-        };
 
-        data
+        let account = match serde_json::from_str(&data) {
+            Ok(account) => account,
+            Err(e) => {
+                println!("Unable to parse Account Data collected from MT5:\n
+                       String Received: {}, \n Error: {}", &data, e);
+                println!("Sharing default Account information for pseudo use.");
+                let account = Account::default();
+                account
+            }
+        };
+        account
+
     }
 }

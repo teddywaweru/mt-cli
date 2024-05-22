@@ -50,7 +50,7 @@ impl Mt5Bridge {
         order_type: String,
         risk: f32,
     ) -> OpenTrade{
-        let account = Self::get_account_info()?;
+        let account = Self::get_account_info();
         let symbol = Self::get_symbol_info(symbol);
 
         //Only processing trades in currency pairs only currently
@@ -70,7 +70,7 @@ impl Mt5Bridge {
 
         println!("Response back on OPEN_TRADE:\n {:#?}", response);
 
-        Ok(())
+        response
     }
 
     fn modify_trade() {
@@ -128,11 +128,11 @@ impl Mt5Bridge {
 
         let response = bridge.sockets.request(data, 0).receive();
 
-        let response = Account::parse_mt5_response(&response)?;
+        let account = Account::parse_mt5_response(&response);
 
-        println!("Account Info received from mt5: {:#?}", response);
+        println!("Account Info received from mt5: {:#?}", account);
 
-        Ok(response)
+        account
     }
     pub fn get_indicator_data(data: &str) -> String {
         todo!()

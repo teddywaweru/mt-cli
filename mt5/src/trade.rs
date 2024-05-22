@@ -67,3 +67,22 @@ impl From<String> for OpenTrades {
         OpenTrades { trades: todo!() }
     }
 }
+
+struct ClosedTrade {
+    ticket: u32,
+    magic: i32,
+    symbol: Symbol,
+    lot_size: f32,
+    trade_type: OrderType,
+    open_price: f32,
+    close_price: f32,
+    open_time: String,
+    stop_loss: f32,
+    take_profit: f32,
+    pnl: f32,
+    comment: String,
+
+}
+struct ClosedTrades {
+    pub trades: Vec<ClosedTrade>,
+}

@@ -6,7 +6,12 @@ use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Map;
 
-/// Trade Object Data for Generating New Trades
+/// Order Object Data for Generating New Requests to the MT5 Server
+/// Implemented for:
+/// - New Order Generation
+/// - Modifying existing Trades
+/// - Closing existing Trades
+/// - 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Order {
     magic: u32,
