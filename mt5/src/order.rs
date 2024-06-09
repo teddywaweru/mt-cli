@@ -12,6 +12,19 @@ use serde_json::Map;
 /// - Modifying existing Trades
 /// - Closing existing Trades
 /// - 
+/// -
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OrderRequest {
+    symbol: Symbol,
+    volume: f32,
+    price: f32,
+    sl: f32,
+    tp: f32,
+    order_type: OrderType,
+    order_type_filling: OrderTypeFilling,
+    order_type_time: DateTime<Utc>,
+    comment: String,
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Order {
     magic: u32,

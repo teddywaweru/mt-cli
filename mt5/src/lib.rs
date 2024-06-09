@@ -26,7 +26,7 @@ pub use mt5_bridge::Mt5Bridge;
 pub use sockets::ConnectionSockets;
 pub use symbol::{Symbol, Symbols};
 pub use tick::{HistoricalTickDataRequest, HistoricalTickData };
-pub use order::{OrderType, Order, OrderTypeFilling, serde_order_type_filling};
+pub use order::{OrderType, OrderRequest, Order, OrderTypeFilling, serde_order_type_filling};
 pub use timeframe::{serde_timeframe, Timeframe };
 pub use ohlc::OHLC;
 
