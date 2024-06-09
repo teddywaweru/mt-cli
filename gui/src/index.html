@@ -17,6 +17,93 @@
 
 <body>
 	<div class="container">
+		<div class="details">
+			<div class="account-info">
+				<h2 id="Account"> Account Info </h2>
+				<p id="update-account-info"> Click here to update Account Info. </p>
+				<table>
+					<tr>
+						<td class="title"> Account Number </td>
+						<td id="account_number"></td>
+					</tr>
+					<tr>
+						<td class="title">Name</td>
+						<td id="name"></td>
+					</tr>
+					<tr>
+						<td class="title">current_time</td>
+						<td id="current_time"></td>
+					</tr>
+					<tr>
+						<td class="title">Current Balance</td>
+						<td id="current_balance"></td>
+					</tr>
+					<tr>
+						<td class="title">Current Equity</td>
+						<td id="current_equity"></td>
+					</tr>
+					<tr>
+						<td class="title">Leverage</td>
+						<td id="leverage"></td>
+					</tr>
+					<tr>
+						<td class="title">Currency</td>
+						<td id="currency"></td>
+					</tr>
+					<tr>
+						<td class="title">Free Margin</td>
+						<td id="free_margin"></td>
+					</tr>
+					<tr>
+						<td class="title">Current Profit</td>
+						<td id="current_profit"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="trades">
+				<h2> Trades </h2>
+				<table>
+
+				</table>
+			</div>
+			<div class="execute">
+				<h2> Executed </h2>
+				<div id="calculate">
+					<form>
+						<div>
+							<select id="order-types"></select>
+							<input id="risk" placeholder="Risk" />
+						</div>
+						<button id="refresh-symbols">Refresh Symbols List</button>
+						<select id="symbols"></select>
+						<div>
+							<button type="advanced-options">Advanced Options</button>
+							<button type="calculate-order">Calculate Order</button>
+							<button type="generate-order">Generate Order</button>
+						</div>
+					</form>
+					<div id="calculated-order">
+						<!-- <p id="magic"></p> -->
+						<!-- <p id="ticket"></p> -->
+						<p id="symbol"></p>
+						<p id="volume"></p>
+						<p id="price"></p>
+						<p id="sl"></p>
+						<p id="tp"></p>
+						<!-- <p id="deviation"></p> -->
+						<p id="order_type"></p>
+						<p id="order_type_filling"></p>
+						<p id="order_type_time"></p>
+						<!-- <p id="expiration"></p> -->
+						<p id="comment"></p>
+						<!-- <p id="position"></p> -->
+						<!-- <p id="position_by"></p> -->
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p id="greet-msg"></p>
 	</div>
 </body>
 

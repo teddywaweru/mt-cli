@@ -110,3 +110,12 @@ button {
 	}
 }
 
+.details {
+	display: flex;
+	justify-content: space-between;
+}
+
+.account-info {
+	background-color: blue;
+	
+}
