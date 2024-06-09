@@ -3,7 +3,7 @@ use serde::{
     de::{self, Visitor},
     Deserialize, Serialize,
 };
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Symbol {
     pub name: String,
     pub sector: String,
@@ -61,7 +61,7 @@ pub struct Symbols {
 impl Default for Symbols {
     fn default() -> Self {
         Symbols {
-            symbols: vec![Symbol::default()],
+            symbols: vec![Symbol::default(); 5],
         }
     }
 }

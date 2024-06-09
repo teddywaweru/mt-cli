@@ -44,7 +44,7 @@ pub struct Order {
     position_by: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum OrderTypeFilling {
     SymbolFillingFOK = 0,
     SymbolFillingIOC = 1,
