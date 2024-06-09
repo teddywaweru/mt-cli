@@ -5,13 +5,13 @@ use crate::{
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Map;
+use strum::{EnumIter, IntoEnumIterator};
 
 /// Order Object Data for Generating New Requests to the MT5 Server
 /// Implemented for:
 /// - New Order Generation
 /// - Modifying existing Trades
 /// - Closing existing Trades
-/// - 
 /// -
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OrderRequest {
@@ -106,7 +106,7 @@ impl Default for OrderTypeTime {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, EnumIter, Serialize, Deserialize)]
 pub enum OrderType {
     OrderTypeBuy = 0,
     OrderTypeSell = 1,
@@ -121,6 +121,11 @@ pub enum OrderType {
 impl Default for OrderType {
     fn default() -> Self {
         Self::OrderNanDefault
+    }
+}
+impl OrderType {
+    pub fn list_order_types() -> Vec<OrderType> {
+        OrderType::iter().collect()
     }
 }
 impl From<String> for OrderType {
