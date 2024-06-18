@@ -1,3 +1,5 @@
 **/target
 **/rust-zmq
 **/Cargo.lock
+trader
+*/*.ex5
