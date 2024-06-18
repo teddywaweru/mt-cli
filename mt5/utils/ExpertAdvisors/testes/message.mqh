@@ -90,7 +90,7 @@ string InterpretZmqMessage(Socket &pSocket, string &compArray[])
 
          MqlTradeRequest request = {};
 
-		 request.action = TRADE_ACTION_DEAL;
+         request.action = TRADE_ACTION_DEAL;
          request.symbol = compArray[3];
          request.volume = StringToDouble(compArray[8]);
          request.price = StringToDouble(compArray[4]);
@@ -100,10 +100,10 @@ string InterpretZmqMessage(Socket &pSocket, string &compArray[])
          request.type = (ENUM_ORDER_TYPE)compArray[2];
          request.comment = compArray[7];
          request.magic = StringToInteger(compArray[8]);
-		 request.type_filling = ORDER_FILLING_IOC;
+         request.type_filling = ORDER_FILLING_IOC;
 
          zmq_ret = "{'action': 'NEW_TRADE',";
-         OpenNewTrade( request, zmq_ret);
+         OpenNewTrade(request, zmq_ret);
          zmq_ret += "}";
          break;
         }
@@ -119,6 +119,15 @@ string InterpretZmqMessage(Socket &pSocket, string &compArray[])
          break;
 
       case 9:
+
+      case 11:
+
+         zmq_ret = "{'action': 'GET_SYMBOLS',";
+         GetSymbols(zmq_ret);
+
+		 zmq_ret += "}";
+
+         break;
 
       default:
          zmq_ret = "{NO DATA}";
@@ -185,13 +194,32 @@ void GetSymbolInfo(string &zmq_ret, string &symbol)
   }
 //+------------------------------------------------------------------+
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void GetSymbols(string &zmq_ret)
+  {
+   int count = SymbolsTotal(false);
+   zmq_ret += "'symbols': [";
+   for(int i = 0; i < count; i++)
+     {
+	   zmq_ret += "{";
+       GetSymbolInfo(zmq_ret, SymbolName(i, false));
+
+	   zmq_ret += "}";
+	   if (i != count -1) {
+	   zmq_ret += ",";
+	   }
+     }
+	 zmq_ret += "]";
+  }
+
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void GetSymbolHistData(string& compArray[], string& zmq_ret)
   {
-   Print("Check if GetSymbolHist is hit");
    Print("Value of compArray[3]", compArray[3]);
    Print("Value of compArray[2]", compArray[2]);
 
