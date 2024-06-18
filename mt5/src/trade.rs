@@ -1,4 +1,4 @@
-use crate::parse;
+use crate::{ parse, serde_order_type };
 use crate::{OrderType, Symbol};
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -9,11 +9,12 @@ pub struct OpenTrade {
     magic: i32,
     symbol: Symbol,
     lot_size: f32,
+    #[serde(with = "serde_order_type")]
     trade_type: OrderType,
     open_price: f32,
     open_time: String,
-    stop_loss: f32,
-    take_profit: f32,
+    sl: f32,
+    tp: f32,
     pnl: f32,
     comment: String,
 }
@@ -27,8 +28,8 @@ impl Default for OpenTrade {
             trade_type: OrderType::OrderNanDefault,
             open_price: 0.0,
             open_time: "Default time".to_string(),
-            stop_loss: 500.0,
-            take_profit: 500.0,
+            sl: 500.0,
+            tp: 500.0,
             pnl: 0.0,
             comment: "Default Comment".to_string(),
         }

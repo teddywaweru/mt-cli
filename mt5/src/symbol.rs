@@ -1,4 +1,4 @@
-use crate::{ parse, OrderTypeFilling, serde_order_type_filling };
+use crate::{parse, serde_order_type_filling, OrderTypeFilling};
 use serde::{
     de::{self, Visitor},
     Deserialize, Serialize,
@@ -13,7 +13,7 @@ pub struct Symbol {
     pub ask: f32,
     pub tick_value: f32,
     #[serde(with = "serde_order_type_filling")]
-    pub type_filling: OrderTypeFilling
+    pub type_filling: OrderTypeFilling,
 }
 impl Default for Symbol {
     fn default() -> Self {
@@ -33,7 +33,7 @@ impl Default for Symbol {
             bid,
             ask,
             tick_value,
-            type_filling
+            type_filling,
         }
     }
 }
@@ -66,18 +66,27 @@ impl Default for Symbols {
     }
 }
 impl Symbols {
+    fn new() -> Self {
+        Symbols { symbols: vec![] }
+    }
     pub fn parse_mt5_response(data: &str) -> Self {
-        let data = data.replace("'", "\"");
         let data = parse::sanitize_mt5_response(&data);
-        let data = match serde_json::from_str(&data) {
+        let mut data: Symbols = match serde_json::from_str(&data) {
             Ok(data) => data,
             Err(e) => {
                 panic!("Unable to parse string to Symbols object. \n Received String: \n {data} \n Error: {e}")
             }
         };
-        println!("Symbols Received from mt5: {:#?}", data);
 
-        data
+        data.order_symbols()
+    }
+
+    fn order_symbols(&mut self) -> Self {
+        let ordered_symbols = Symbols::new();
+
+        self.symbols.sort_by_key(|symbol| symbol.name.clone());
+
+        std::mem::take(self)
     }
 }
 
