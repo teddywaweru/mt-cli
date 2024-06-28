@@ -1,21 +1,5 @@
 const { invoke } = window.__TAURI__.tauri;
 
-async function message() {
-	let messageContent = document.querySelector("#return-message");
-	messageContent.textContent = "Suck a nipple";
-	messageContent.textContent = await invoke("message_sender", { name: "Reuben" });
-}
-async function struct() {
-	let structContent = document.querySelector("#return-struct");
-	structContent.textContent = await invoke("struct_sender", { name: "Steven" });
-}
-
-
-async function greet() {
-	// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-	greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
-}
-
 async function updateAccountInfo() {
 	// Get response
 	let response = await invoke("update_account_info", {});
@@ -41,11 +25,6 @@ async function updateAccountInfo() {
 	currency.textContent = response['currency'];
 	free_margin.textContent = response['free_margin'];
 	current_profit.textContent = response['current_profit'];
-	// let symbols_list = document.getElementById("symbols");
-	// let opt = document.createElement('option');
-	// opt.text = "whoosh";
-	// opt.value = "stumped";
-	// symbols_list.add(opt, null);
 }
 
 async function loadSymbols() {
@@ -67,22 +46,48 @@ async function loadOrderTypes() {
 	let response = await invoke("get_order_types");
 
 	let order_types = document.getElementById("order-types");
-		// var opt = document.createElement("option");
-		// opt.value = "this";
-		// opt.text = "this";
-		// order_types.add(opt, null);
-		// var opt = document.createElement("option");
-		// opt.value =response;
-		// opt.text =response;
-		// order_types.add(opt, null);
-	// let order_type_list = document.getElementById("order-types");
 
 	order_types.innerHTML = "";
 	response.forEach((order_type) => {
 		var opt = document.createElement("option");
-		opt.value =order_type;
-		opt.text =order_type;
+		opt.value = order_type;
+		opt.text = order_type;
 
 		order_types.add(opt, null);
 	});
+}
+
+async function calculateOrder() {
+	let account = document.getElementById("account_number").textContent;
+	let order_type = document.getElementById("order-types").value;
+	let symbol = document.getElementById("symbols").value;
+	let risk = document.getElementById("risk").value;
+	let volume = document.getElementById("volume").textContent;
+	let price = document.getElementById("price").textContent;
+	let sl = document.getElementById("sl").textContent;
+	let tp = document.getElementById("tp").textContent;
+	let account_number = document.getElementById("account_number");
+
+
+
+	// let order_request = {
+	// 	account: account,
+	// 	order_type: order_type,
+	// 	symbol: symbol,
+	// 	risk: risk,
+	// 	volume: volume,
+	// 	price: price,
+	// 	sl: sl,
+	// 	tp: tp
+	// };
+	// let response = await invoke("calculate_order", { order_request: order_request });
+	order_type = "buy";
+	let response = await invoke("calculate_order", {symbol: symbol, order_type: order_type, risk: 0.02});
+	let calculatedOrderSection = document.getElementById("calculated-order");
+	let tester = calculatedOrderSection.querySelector("#symbol");
+	tester.textContent = response;
+	// response = "oops";
+
+
+
 }

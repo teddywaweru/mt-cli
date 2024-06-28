@@ -63,3 +63,9 @@ impl Account {
 
     }
 }
+
+impl From<&str> for Account {
+    fn from(account: &str) -> Self {
+        Account::default()
+    }
+}

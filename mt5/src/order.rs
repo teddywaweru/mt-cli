@@ -15,15 +15,17 @@ use strum::{EnumIter, IntoEnumIterator};
 /// -
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OrderRequest {
-    symbol: Symbol,
-    volume: f32,
-    price: f32,
-    sl: f32,
-    tp: f32,
-    order_type: OrderType,
-    order_type_filling: OrderTypeFilling,
-    order_type_time: DateTime<Utc>,
-    comment: String,
+    pub account: Account,
+    pub order_type: OrderType,
+    pub symbol: Symbol,
+    pub risk: f32,
+    // volume: f32,
+    // price: f32,
+    // sl: f32,
+    // tp: f32,
+    // order_type_filling: OrderTypeFilling,
+    // order_type_time: DateTime<Utc>,
+    // comment: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Order {
@@ -46,13 +48,13 @@ pub struct Order {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum OrderTypeFilling {
-    SymbolFillingFOK = 0,
-    SymbolFillingIOC = 1,
-    SymbolFillingBOC = 2,
-    // SymbolTradeExecutionInstant,
-    // SymbolTradeExecutionRequest,
-    // SymbolTradeExecutionMarket,
-    // SymbolTradeExecutionExchange,
+    OrderFillingFOK = 0,
+    OrderFillingIOC = 1,
+    OrderFillingBOC = 2,
+    OrderFillingReturn = 3, // SymbolTradeExecutionInstant,
+                            // SymbolTradeExecutionRequest,
+                            // SymbolTradeExecutionMarket,
+                            // SymbolTradeExecutionExchange,
 }
 
 pub mod serde_order_type_filling {
@@ -64,9 +66,10 @@ pub mod serde_order_type_filling {
     {
         let type_filling = u8::deserialize(deserializer)?;
         let type_filling = match type_filling {
-            0 => OrderTypeFilling::SymbolFillingFOK,
-            1 => OrderTypeFilling::SymbolFillingIOC,
-            2 => OrderTypeFilling::SymbolFillingBOC,
+            0 => OrderTypeFilling::OrderFillingFOK,
+            1 => OrderTypeFilling::OrderFillingIOC,
+            2 => OrderTypeFilling::OrderFillingBOC,
+            3 => OrderTypeFilling::OrderFillingReturn,
             _ => panic!("No matching Type Filling for val provided: \n Value: {type_filling}"),
         };
 
@@ -77,9 +80,10 @@ pub mod serde_order_type_filling {
         S: Serializer,
     {
         let type_filling = match type_filling {
-            OrderTypeFilling::SymbolFillingFOK => OrderTypeFilling::SymbolFillingFOK as u8,
-            OrderTypeFilling::SymbolFillingIOC => OrderTypeFilling::SymbolFillingIOC as u8,
-            OrderTypeFilling::SymbolFillingBOC => OrderTypeFilling::SymbolFillingBOC as u8,
+            OrderTypeFilling::OrderFillingFOK => OrderTypeFilling::OrderFillingFOK as u8,
+            OrderTypeFilling::OrderFillingIOC => OrderTypeFilling::OrderFillingIOC as u8,
+            OrderTypeFilling::OrderFillingBOC => OrderTypeFilling::OrderFillingBOC as u8,
+            OrderTypeFilling::OrderFillingReturn => OrderTypeFilling::OrderFillingReturn as u8,
         };
 
         serializer.serialize_u8(type_filling)
@@ -88,7 +92,7 @@ pub mod serde_order_type_filling {
 
 impl Default for OrderTypeFilling {
     fn default() -> Self {
-        Self::SymbolFillingIOC
+        Self::OrderFillingIOC
     }
 }
 
@@ -141,6 +145,49 @@ impl From<String> for OrderType {
         }
     }
 }
+
+pub mod serde_order_type {
+    use crate::OrderType;
+    use serde::{Deserialize, Deserializer, Serializer};
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<OrderType, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let order_type = u8::deserialize(deserializer)?;
+
+        let order_type = match order_type {
+            0 => OrderType::OrderTypeBuy,
+            1 => OrderType::OrderTypeSell,
+            2 => OrderType::OrderTypeBuyLimit,
+            3 => OrderType::OrderTypeSellLimit,
+            4 => OrderType::OrderTypeBuyStop,
+            5 => OrderType::OrderTypeSellStop,
+            6 => OrderType::OrderTypeBuyStopLimit,
+            7 => OrderType::OrderTypeSellStopLimit,
+            _ => OrderType::OrderNanDefault,
+        };
+
+        Ok(order_type)
+    }
+    pub fn serialize<S>(order_type: &OrderType, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let order_type = match order_type {
+            OrderType::OrderTypeBuy => OrderType::OrderTypeBuy as u8,
+            OrderType::OrderTypeSell => OrderType::OrderTypeSell as u8,
+            OrderType::OrderTypeBuyLimit => OrderType::OrderTypeBuyLimit as u8,
+            OrderType::OrderTypeSellLimit => OrderType::OrderTypeSellLimit as u8,
+            OrderType::OrderTypeBuyStop => OrderType::OrderTypeBuyStop as u8,
+            OrderType::OrderTypeSellStop => OrderType::OrderTypeSellStop as u8,
+            OrderType::OrderTypeBuyStopLimit => OrderType::OrderTypeBuyStopLimit as u8,
+            OrderType::OrderTypeSellStopLimit => OrderType::OrderTypeSellStopLimit as u8,
+            OrderType::OrderNanDefault => OrderType::OrderNanDefault as u8,
+        };
+
+        serializer.serialize_u8(order_type)
+    }
+}
 impl Default for Order {
     fn default() -> Self {
         Order {
@@ -162,16 +209,58 @@ impl Default for Order {
         }
     }
 }
+
+impl Default for OrderRequest {
+    fn default() -> Self {
+        OrderRequest {
+            account: Account::default(),
+            risk: 0.02,
+            symbol: Symbol::default(),
+            // volume: 0.01,
+            // price: 30.0,
+            // sl: 5.0,
+            // tp: 5.0,
+            order_type: OrderType::default(),
+        }
+    }
+}
+impl OrderRequest {}
+//Calculate Order parameters, which generates an order request
+//Send an order request, which generates and executes an order
+impl From<&OrderRequest> for Order {
+    fn from(request: &OrderRequest) -> Self {
+        Order {
+            magic: todo!(),
+            ticket: todo!(),
+            symbol: todo!(),
+            volume: todo!(),
+            price: todo!(),
+            sl: todo!(),
+            tp: todo!(),
+            deviation: todo!(),
+            order_type: todo!(),
+            order_type_filling: todo!(),
+            order_type_time: todo!(),
+            expiration: todo!(),
+            comment: todo!(),
+            position: todo!(),
+            position_by: todo!(),
+        }
+    }
+}
 impl Order {
-    pub fn new_order(symbol: Symbol, order_type: OrderType, risk: f32, account: Account) -> Self {
-        let risk_amount = account.current_balance * risk;
+    // pub fn new_order(symbol: Symbol, order_type: OrderType, risk: f32, account: Account) -> Self {
+    pub fn new_order(order_request: OrderRequest) -> Self {
+        // let request = order_request;
+        // let risk_amount = Account::from(order_request.account.as_str()).current_balance * order_request.risk;
+        let risk_amount = order_request.account.current_balance * order_request.risk;
 
         // let account = Mt5Bridge::get_account_info();
         let pip_value: f32;
         let volume: f32;
         let sl: f32;
         let tp: f32;
-        let pips: u32 = Self::calculate_pips(&symbol);
+        let pips: u32 = Self::calculate_pips(&order_request.symbol);
         let tp_multiplier: f32 = 1.0;
         let sl_multiplier: f32 = 1.5;
         let price: f32;
@@ -181,23 +270,27 @@ impl Order {
         // CALCULATING LOT SIZE -> get pip value first
         // get instrument category
         // separate symbol to first and second currencies
-        match order_type {
+        match order_request.order_type {
             OrderType::OrderTypeBuy => {
-                price = symbol.ask;
-                sl = symbol.bid - ((pips * 10) as f32 * symbol.point * sl_multiplier) as f32;
-                tp = price + ((pips * 10) as f32 * symbol.point * tp_multiplier) as f32;
+                price = order_request.symbol.ask;
+                sl = order_request.symbol.bid
+                    - ((pips * 10) as f32 * order_request.symbol.point * sl_multiplier) as f32;
+                tp = price
+                    + ((pips * 10) as f32 * order_request.symbol.point * tp_multiplier) as f32;
                 comment = "testing".to_string();
                 volume = risk_amount
-                    / (symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier)
-                    / 10 as f32;
+                    / (order_request.symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier)
+                     as f32;
             }
             OrderType::OrderTypeSell => {
-                price = symbol.bid;
-                sl = symbol.ask + ((pips * 10) as f32 * symbol.point * sl_multiplier) as f32;
-                tp = price - ((pips * 10) as f32 * symbol.point * tp_multiplier) as f32;
+                price = order_request.symbol.bid;
+                sl = order_request.symbol.ask
+                    + ((pips * 10) as f32 * order_request.symbol.point * sl_multiplier) as f32;
+                tp = price
+                    - ((pips * 10) as f32 * order_request.symbol.point * tp_multiplier) as f32;
                 comment = "testing sells".to_string();
                 volume = risk_amount
-                    / (symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier)
+                    / (order_request.symbol.tick_value * 10 as f32 * pips as f32 * sl_multiplier)
                     / 10 as f32;
             }
             OrderType::OrderTypeBuyLimit => {
@@ -209,8 +302,8 @@ impl Order {
         }
 
         let mut new_order = Order::default();
-        new_order.order_type = order_type;
-        new_order.symbol = symbol;
+        new_order.order_type = order_request.order_type;
+        new_order.symbol = order_request.symbol;
         new_order.price = price;
         new_order.sl = sl;
         new_order.tp = tp;
@@ -238,7 +331,7 @@ impl Order {
         } else {
             use crate::ConnectionSockets;
             let sockets = ConnectionSockets::initialize().unwrap();
-            let data = "TRADE;GET_SYMBOLS";
+            let data = "DATA;GET_SYMBOLS";
             println!("quote_curr: {quote_curr}");
             let symbols = Mt5Bridge::get_symbols().symbols;
             let alt_symbol: &Symbol = symbols
@@ -305,7 +398,7 @@ impl Order {
     }
     pub fn generate_request(self) -> String {
         let data = format!(
-            "TRADE;OPEN;{:#?};{};{};{};{};{};{:.02};{};{},",
+            "TRADE;OPEN;{:#?};{};{};{};{};{};{:.02};{};{},{:#?}",
             self.order_type as u8,
             self.symbol.name,
             self.price,
@@ -314,7 +407,8 @@ impl Order {
             self.comment,
             self.volume,
             self.magic,
-            self.ticket
+            self.ticket,
+            self.order_type_filling
         );
         data
     }

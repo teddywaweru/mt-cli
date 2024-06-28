@@ -5,7 +5,7 @@
 use crate::sockets::ConnectionSockets;
 use crate::{
     Account, HistoricalTickData, HistoricalTickDataRequest, InstantRates, OpenTrade, Order,
-    OrderType, Symbol, Symbols, Timeframe,
+    OrderRequest, OrderType, Symbol, Symbols, Timeframe,
 };
 use chrono::{DateTime, Utc};
 //TRADES
@@ -33,10 +33,8 @@ impl Mt5Bridge {
         symbol
     }
     pub fn get_symbols() -> Symbols {
-        let data = "TRADE;GET_SYMBOLS";
+        let data = "DATA;GET_SYMBOLS";
         let response = Mt5Bridge::init().sockets.request(data, 1).receive();
-        // let response = Symbols::default();
-        println!("Message received from mt5_response: {response}");
 
         let response = Symbols::parse_mt5_response(&response);
         response
@@ -45,11 +43,15 @@ impl Mt5Bridge {
 
 // Execute Operations
 impl Mt5Bridge {
-    pub fn generate_order(
-        symbol: &str,
-        order_type: String,
-        risk: f32,
-    ) -> OpenTrade{
+    // pub fn generate_order (order_request: OrderRequest) -> Order {
+    //     todo!()
+    //         //lot size
+    //         //tp and sl values
+    //         //risk amount
+    //
+    //
+    // }
+    pub fn generate_order(symbol: &str, order_type: String, risk: f32) -> OpenTrade {
         let account = Self::get_account_info();
         let symbol = Self::get_symbol_info(symbol);
 
@@ -63,7 +65,19 @@ impl Mt5Bridge {
 
         //Static OrderType currently
         let order_type = OrderType::from(order_type);
-        let request = Order::new_order(symbol, order_type, risk, account).generate_request();
+        let order_request = OrderRequest {
+            account: Account::default(),
+            order_type,
+            symbol,
+            risk 
+            // volume: todo!(),
+            // price: todo!(),
+            // sl: todo!(),
+            // tp: todo!(),
+        };
+        // let mut order_request = OrderRequest::default();
+        let request = Order::new_order(order_request).generate_request();
+        // let request = Order::new_order(symbol, order_type, risk, account).generate_request();
 
         let response = Mt5Bridge::init().sockets.request(&request, 0).receive();
         let response = OpenTrade::from_mt5_response(&response);

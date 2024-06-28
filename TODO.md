@@ -1,5 +1,5 @@
 ## Functionality
-- [] Make a new order
+- [x] Make a new order
 - [] Track existing trades
 - [] Modify existing trades with new order
 - [] Track Pricing
