@@ -8,7 +8,10 @@
 
 ## Architecture
 - [] Compile for both Windows and Linux
-- [] Different Application Types: cli, gui
+### Different Application Types: cli, gui
+- [] cli
+- [] gui
+- [] Separate Strategy section so that users can define their own?
 
 
 
