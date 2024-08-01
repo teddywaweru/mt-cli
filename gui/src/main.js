@@ -1,29 +1,8 @@
-window.addEventListener("DOMContentLoaded", () => {
+import "./styles.css";
+import App from "./App.svelte";
 
-	accountEventListeners();
-	orderEventListeners();
-
-	// setInterval( loadSymbols, 5000);
+const app = new App({
+  target: document.getElementById("app"),
 });
 
-function orderEventListeners() {
-	document.querySelector("#symbols").addEventListener("click", (e) => {
-		e.preventDefault();
-		loadSymbols();
-	})
-	document.querySelector("#order-types").addEventListener("click", (e) => {
-		e.preventDefault()
-		loadOrderTypes();
-	})
-	document.querySelector("#calculate-order").addEventListener("click", (e) => {
-		e.preventDefault();
-		calculateOrder();
-	})
-}
-function accountEventListeners() {
-	document.querySelector("#update-account-info").addEventListener("click", (e) => {
-		e.preventDefault();
-		updateAccountInfo();
-	})
-}
-
+export default app;
