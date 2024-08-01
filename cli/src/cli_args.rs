@@ -1,8 +1,6 @@
-use crate::test_algorithm::RunAlgo;
 use clap::{Parser, Subcommand, ValueEnum};
-use mt5::HistoricalTickData;
-use mt5::InstantRates;
-use mt5::Mt5Bridge;
+use mt5::{Account, OpenTrade, OpenTrades};
+use mt5::{InstantRates, Order, OrderRequest};
 
 #[derive(Parser)]
 #[command(author="njuwate", version="0.1.0", about="Trying something that works with zeromq and metatrader5 and Rust", long_about=None)]
@@ -27,22 +25,22 @@ impl Args {
                 let duration = 240;
                 let start = "2020.01.01 00:00:00".to_owned();
                 let end = "2023.01.01 00:00:00".to_owned();
-                let runalgo_instance = RunAlgo::new(symbol, timeframe, duration, start, end).run();
             }
             SubArgs::GetActiveTrades => {
                 println!("Getting Active Trades");
-                let active_trades = Mt5Bridge::get_existing_trades().unwrap();
+                // let active_trades = Mt5Bridge::get_existing_trades().unwrap();
+                let active_trades = OpenTrades::fetch_all();
 
                 println!("Current Trades:{:#?}", active_trades);
             }
             SubArgs::GetAccountInfo => {
                 println!("Getting Account Info");
-                let account = Mt5Bridge::get_account_info();
+                let account = Account::get_account_info();
 
                 println!("Account info: {:#?}", account);
             }
             SubArgs::GetInstantRates { symbol } => {
-                let instant_rates = Mt5Bridge::get_instant_rates(&symbol);
+                let instant_rates = InstantRates::get(&symbol);
                 println!("Response back: {:?}", instant_rates);
             }
             SubArgs::GetHistoricalTickData {
@@ -65,17 +63,20 @@ impl Args {
                 // Will need to determine if it's going to be an instant or one set for
                 // later...
 
-                println!("Some symbols are not defined. Default values will be used as:\n
-                         Symbol: EURUSD \n OrderType: buy\n Risk: 0.02");
+                println!(
+                    "Some symbols are not defined. Default values will be used as:\n
+                         Symbol: EURUSD \n OrderType: buy\n Risk: 0.02"
+                );
 
-                let response = Mt5Bridge::generate_order(&symbol, order_type, risk);
+                let order_request = OrderRequest::default();
+                let response = Order::new_order(order_request);
             }
             SubArgs::ExecuteOtherTrade { kind } => todo!(),
             SubArgs::OtherThing { password } => todo!(),
             SubArgs::NewOtherThing { username } => todo!(),
             SubArgs::TrackPrices => {
                 let data = "TRACK_PRICES";
-                Mt5Bridge::get_indicator_data(data);
+                // Mt5Bridge::get_indicator_data(data);
 
                 // Parse Indicator data to save
                 println!("Here's the data : {:#?}", data);
@@ -85,7 +86,8 @@ impl Args {
                 order_type,
                 risk,
             } => {
-                Mt5Bridge::generate_order(&symbol, order_type, risk);
+                let order_request = OrderRequest::default();
+                Order::new_order(order_request);
             }
         }
     }

@@ -1,8 +1,3 @@
-use crate::cli_args::Args;
-use clap::{Parser, Subcommand};
-pub fn run_cli() {
-    let args = Args::parse().run();
-}
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
