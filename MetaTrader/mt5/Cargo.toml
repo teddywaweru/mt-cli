@@ -1,0 +1,14 @@
+[package]
+name = "mt5"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = { version = "0.4.38", features = ["serde"] }
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.121"
+strum = { version = "0.26.3", features = ["derive"] }
+strum_macros = "0.26.4"
+zmq = "0.10.0"
